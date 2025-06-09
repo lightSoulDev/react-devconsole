@@ -1,5 +1,5 @@
 {
-  "name": "devconsole",
+  "name": "react-devconsole",
   "version": "1.0.0",
   "description": "A drop-in development logger with a built-in console UI for debuging React applications.",
   "main": "dist/index.js",
