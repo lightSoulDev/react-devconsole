@@ -46,7 +46,7 @@ export class Logger {
     // Find the first stack frame that's not from the Logger itself
     for (let i = 1; i < stack.length; i++) {
       const line = stack[i];
-      if (!line.includes('/Logger.ts') && !line.includes('\\Logger.ts')) {
+      if (!line.includes('lightSoulDev/react-devconsole')) {
         const match = line.match(/at\s+(?:.*?\s+\()?(.+):(\d+):(\d+)\)?$/);
         if (match) {
           const [, file, lineNum, column] = match;
