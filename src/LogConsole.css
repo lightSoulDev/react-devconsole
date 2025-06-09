@@ -1,0 +1,409 @@
+.log-console {
+  all: unset;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #1a1a1a;
+  border-top: 2px solid #333;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  z-index: 9999;
+  box-shadow: 0 0px 12px rgba(0, 0, 0, 0.3);
+}
+
+.log-console.fullscreen {
+  height: 100vh !important;
+  top: 0;
+  bottom: auto;
+  border-top: none;
+  transform-origin: top;
+}
+
+.log-console.dragging {
+  user-select: none;
+}
+
+.log-console.dragging * {
+  cursor: ns-resize !important;
+}
+
+.log-console-drag-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background-color: transparent;
+  cursor: ns-resize;
+  z-index: 10;
+}
+
+.log-console-drag-handle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: #666;
+  border-radius: 3px;
+}
+
+.log-console.fullscreen .log-console-drag-handle {
+  display: none;
+}
+
+.log-console-header {
+  all: unset;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #444;
+  cursor: default;
+}
+
+.log-console-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.filtered-count {
+  color: #aaa;
+  font-size: 13px;
+}
+
+.log-console-controls {
+  all: unset;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.log-console-filter {
+  all: unset;
+  padding: 4px 8px;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+  width: 200px;
+}
+
+.log-console-filter:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.log-console-level-filter {
+  all: unset;
+
+  padding: 4px 8px;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.log-console-level-filter:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.log-console-controls button {
+  all: unset;
+  padding: 4px 12px;
+  background-color: #333;
+  border: 1px solid #555;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.log-console-controls button:hover {
+  background-color: #444;
+}
+
+.log-console-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  padding-bottom: 0;
+  background-color: #0d0d0d;
+  min-height: 0; /* Important for flex children */
+}
+
+.log-entry {
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background-color: #1a1a1a;
+  border-left: 3px solid;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+}
+
+.log-entry:hover {
+  background-color: #222;
+}
+
+.log-entry-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.log-time {
+  color: #888;
+  font-size: 11px;
+}
+
+.log-level {
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.log-source {
+  color: #666;
+  font-size: 11px;
+  font-style: italic;
+}
+
+.log-message {
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.log-data-container {
+  position: relative;
+  margin-top: 8px;
+}
+
+.log-data {
+  margin: 0;
+  padding: 8px;
+  background-color: #0d0d0d;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #a0a0a0;
+  font-size: 12px;
+  overflow-x: auto;
+  white-space: pre;
+  text-align: left;
+}
+
+.copy-button {
+  all: unset;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 0px 8px;
+  padding-top: 5px;
+  padding-bottom: 3px;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.log-data-container:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  background-color: #333;
+  border-color: #555;
+}
+
+.copy-button:active {
+  background-color: #444;
+}
+
+/* Scrollbar styling */
+.log-console-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.log-console-body::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.log-console-body::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.log-console-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Error stack trace styling */
+.error-stack-section {
+  margin-top: 8px;
+}
+
+.error-stack-toggle {
+  all: unset;
+  padding: 4px 12px;
+  background-color: #333;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+  display: flex;
+}
+
+.error-stack-toggle:hover {
+  all: unset;
+  padding: 4px 12px;
+  background-color: #444;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+  display: flex;
+}
+
+.error-stack-toggle:active {
+  all: unset;
+  padding: 4px 12px;
+  background-color: #444;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+  display: flex;
+}
+
+.error-stack-toggle:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.error-stack {
+  margin: 8px 0 0 0;
+  padding: 8px;
+  background-color: #0d0d0d;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #888;
+  font-size: 11px;
+  overflow-x: auto;
+  white-space: pre;
+  text-align: left;
+  line-height: 1.4;
+}
+
+/* JSON Syntax Highlighting */
+.json-key {
+  color: #9CDCFE;
+}
+
+.json-string {
+  color: #CE9178;
+}
+
+.json-number {
+  color: #B5CEA8;
+}
+
+.json-boolean {
+  color: #569CD6;
+}
+
+.json-null {
+  color: #569CD6;
+  font-style: italic;
+}
+
+/* Command Input */
+.log-console-input-wrapper {
+  position: relative;
+}
+
+.log-console-input-container {
+  all: unset;
+  border-top: 1px solid #444;
+  background-color: #1a1a1a;
+  padding: 0;
+  display: block;
+}
+
+.log-console-input {
+  all: unset;
+  width: 100%;
+  padding: 8px 16px;
+  background-color: transparent;
+  color: #e0e0e0;
+  font-family: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.log-console-input:focus {
+  outline: none;
+  background-color: #222;
+}
+
+.log-console-input::placeholder {
+  color: #666;
+}
+
+/* Autocomplete */
+.log-console-autocomplete {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-bottom: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.autocomplete-item {
+  padding: 6px 16px;
+  cursor: pointer;
+  color: #e0e0e0;
+  font-size: 13px;
+  transition: background-color 0.1s;
+  text-align: left;
+}
+
+.autocomplete-item:hover {
+  background-color: #333;
+}
+
+.autocomplete-item.selected {
+  background-color: #3a3a3a;
+  color: #00FF80;
+}
