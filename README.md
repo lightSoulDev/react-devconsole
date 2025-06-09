@@ -13,6 +13,8 @@ A drop-in development logger with a built-in console UI for debuging React appli
 * Pre-included extensions for HTTP & Storage management
 * Configurable and production-safe
 
+![DevConsole Screenshot](./img/img_1.png)
+
 ## Installation
 
 ```bash
@@ -149,6 +151,8 @@ Supported commands:
 * `/http.post <url>?query [-u] [-H "Header: Value"] [key=value...]`
 * `/http.put <url>?query [-u] [-H "Header: Value"] [key=value...]`
 * `/http.delete <url>?query [-u] [-H "Header: Value"]`
+
+![HTTP Extension](./img/img_2.png)
 
 ### Storage Extension
 
