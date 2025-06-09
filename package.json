@@ -1,7 +1,7 @@
 {
   "name": "devconsole",
   "version": "1.0.0",
-  "description": "A drop-in development logger with integrated console UI for React applications",
+  "description": "A drop-in development logger with a built-in console UI for debuging React applications.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -23,8 +23,8 @@
     "react",
     "typescript"
   ],
-  "author": "",
-  "license": "MIT",
+  "author": "Nurzhan Kozhanov: @lightSoulDev",
+  "license": "Apache License 2.0",
   "peerDependencies": {
     "react": ">=16.0.0",
     "react-dom": ">=16.0.0"
@@ -51,10 +51,10 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/lightSoulDev/react-devconsole"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/lightSoulDev/react-devconsole/issues"
   },
   "homepage": ""
 }
