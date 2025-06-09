@@ -29,7 +29,7 @@ App.tsx
 ```tsx
 import { useState } from 'react'
 import './App.css'
-import { configureDevConsole, DevConsole, DevConsoleUI, activateHttpExtension, activateStorageExtension, setUserHeaders } from 'devconsole'
+import { configureDevConsole, DevConsole, DevConsoleUI, activateHttpExtension, activateStorageExtension, setUserHeaders } from 'react-devconsole'
 
 // Configure DevConsole
 configureDevConsole({

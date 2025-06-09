@@ -16,11 +16,11 @@ A drop-in development logger with a built-in console UI for debuging React appli
 ## Installation
 
 ```bash
-npm install devconsole
+npm install react-devconsole
 # or
-yarn add devconsole
+yarn add react-devconsole
 # or
-pnpm add devconsole
+pnpm add react-devconsole
 ```
 
 ## Quick Start
@@ -54,7 +54,7 @@ define: {
 ### Configuration
 
 ```tsx
-import { DevConsole, DevConsoleUI, configureDevConsole } from 'devconsole';
+import { DevConsole, DevConsoleUI, configureDevConsole } from 'react-devconsole';
 
 configureDevConsole({
   maxLogs: 1000,
@@ -134,7 +134,7 @@ DevConsole.setVariable('userId', 42);
 ### HTTP Extension
 
 ```ts
-import { activateHttpExtension, setUserHeaders } from 'devconsole';
+import { activateHttpExtension, setUserHeaders } from 'react-devconsole';
 
 await activateHttpExtension();
 
@@ -153,7 +153,7 @@ Supported commands:
 ### Storage Extension
 
 ```ts
-import { activateStorageExtension } from 'devconsole';
+import { activateStorageExtension } from 'react-devconsole';
 
 await activateStorageExtension();
 ```
