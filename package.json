@@ -1,6 +1,6 @@
 {
   "name": "react-devconsole",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A drop-in development logger with a built-in console UI for debuging React applications.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -51,10 +51,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lightSoulDev/react-devconsole"
+    "url": "https://github.com/lightSoulDev/react-devconsole.git"
   },
   "bugs": {
     "url": "https://github.com/lightSoulDev/react-devconsole/issues"
   },
-  "homepage": ""
+  "homepage": "https://github.com/lightSoulDev/react-devconsole/#readme"
 }
