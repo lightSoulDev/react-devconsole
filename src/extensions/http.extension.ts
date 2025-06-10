@@ -80,7 +80,7 @@ interface ParsedArgs {
   jsonBody?: any;
 }
 
-const parseArgs = (args: string[]): ParsedArgs => {
+export const parseArgs = (args: string[]): ParsedArgs => {
   const result: ParsedArgs = {
     params: {},
     headers: {},
