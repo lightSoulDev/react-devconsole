@@ -77,6 +77,7 @@ interface ParsedArgs {
   params: Record<string, string>;
   headers: Record<string, string>;
   flags: Set<string>;
+  jsonBody?: any;
 }
 
 const parseArgs = (args: string[]): ParsedArgs => {
@@ -94,6 +95,16 @@ const parseArgs = (args: string[]): ParsedArgs => {
     if (!arg.startsWith('-') && !result.url) {
       result.url = arg;
     }
+    // Parse JSON body flag: -j {...}
+    else if ((arg === '-j' || arg === '--json') && i + 1 < args.length) {
+      result.flags.add('json');
+      try {
+        result.jsonBody = JSON.parse(args[++i]);
+      } catch (e) {
+        logger.dev('Invalid JSON provided with -j flag', e);
+        throw new Error('Invalid JSON format');
+      }
+    }
     // Parse header flags: -H "Key: Value" or --header "Key: Value"
     else if ((arg === '-H' || arg === '--header') && i + 1 < args.length) {
       const headerString = args[++i];
@@ -108,19 +119,54 @@ const parseArgs = (args: string[]): ParsedArgs => {
     else if (arg === '-u' || arg === '--user-headers') {
       result.flags.add('user-headers');
     }
-    // Parse key=value pairs (body/query params) - skip if it's the URL
-    else if (arg.includes('=') && !arg.startsWith('-') && arg !== result.url) {
+    // Parse key=value pairs (body/query params) - skip if it's the URL or if JSON flag is present
+    else if (arg.includes('=') && !arg.startsWith('-') && arg !== result.url && !result.flags.has('json')) {
       const [key, ...valueParts] = arg.split('=');
       result.params[key] = valueParts.join('=');
     }
-    // Parse -key value pairs (skip already handled -H and -u)
-    else if (arg.startsWith('-') && i + 1 < args.length && arg !== '-H' && arg !== '--header' && arg !== '-u' && arg !== '--user-headers') {
+    // Parse -key value pairs (skip already handled -H, -u, and -j)
+    else if (arg.startsWith('-') && i + 1 < args.length && arg !== '-H' && arg !== '--header' && arg !== '-u' && arg !== '--user-headers' && arg !== '-j' && arg !== '--json') {
       const key = arg.substring(1);
       result.params[key] = args[++i];
     }
   }
 
   return result;
+};
+
+// Build request options from parsed arguments
+export const buildRequestOptions = (method: string, parsedArgs: ParsedArgs): HttpRequestOptions | null => {
+  const { url, params, headers, flags, jsonBody } = parsedArgs;
+
+  if (!url) {
+    return null;
+  }
+
+  // Merge headers: base headers + user headers (if -u flag) + command headers
+  const finalHeaders = flags.has('user-headers') 
+    ? { ...userHeaders, ...headers }
+    : headers;
+
+  // Determine body based on -j flag presence
+  const body = flags.has('json') ? jsonBody : params;
+
+  // For GET requests, params should be query parameters regardless of -j flag
+  if (method === 'GET') {
+    return {
+      method,
+      url,
+      query: params,
+      headers: finalHeaders,
+      ...(jsonBody && { body: jsonBody }) // Still allow body for GET if explicitly provided with -j
+    };
+  }
+
+  return {
+    method,
+    url,
+    body,
+    headers: finalHeaders
+  };
 };
 
 // Public API to set user headers
@@ -141,135 +187,91 @@ export const activateHttpExtension = () => {
   // GET request
   logger.registerCommand({
     name: 'http.get',
-    description: 'Make a GET request (usage: /http.get <url> [-u] [-H "Key: Value"] [key=value...])',
+    description: 'Make a GET request (usage: /http.get <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
     handler: async (args) => {
-      const { url, params, headers, flags } = parseArgs(args);
+      const parsedArgs = parseArgs(args);
+      const requestOptions = buildRequestOptions('GET', parsedArgs);
 
-      if (!url) {
-        logger.dev('Usage: /http.get <url> [-u] [-H "Key: Value"] [key=value...]');
+      if (!requestOptions) {
+        logger.dev('Usage: /http.get <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
         return;
       }
 
-      // Merge headers: base headers + user headers (if -u flag) + command headers
-      const finalHeaders = flags.has('user-headers') 
-        ? { ...userHeaders, ...headers }
-        : headers;
-
-      await makeRequest({
-        method: 'GET',
-        url,
-        query: params,
-        headers: finalHeaders
-      });
+      await makeRequest(requestOptions);
     }
   });
 
   // POST request
   logger.registerCommand({
     name: 'http.post',
-    description: 'Make a POST request (usage: /http.post <url> [-u] [-H "Key: Value"] [key=value...])',
+    description: 'Make a POST request (usage: /http.post <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
     handler: async (args) => {
-      const { url, params, headers, flags } = parseArgs(args);
+      const parsedArgs = parseArgs(args);
+      const requestOptions = buildRequestOptions('POST', parsedArgs);
 
-      if (!url) {
-        logger.dev('Usage: /http.post <url> [-u] [-H "Key: Value"] [key=value...]');
+      if (!requestOptions) {
+        logger.dev('Usage: /http.post <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
         return;
       }
 
-      // Merge headers: base headers + user headers (if -u flag) + command headers
-      const finalHeaders = flags.has('user-headers') 
-        ? { ...userHeaders, ...headers }
-        : headers;
-
-      await makeRequest({
-        method: 'POST',
-        url,
-        body: params,
-        headers: finalHeaders
-      });
+      await makeRequest(requestOptions);
     }
   });
 
   // PUT request
   logger.registerCommand({
     name: 'http.put',
-    description: 'Make a PUT request (usage: /http.put <url> [-u] [-H "Key: Value"] [key=value...])',
+    description: 'Make a PUT request (usage: /http.put <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
     handler: async (args) => {
-      const { url, params, headers, flags } = parseArgs(args);
+      const parsedArgs = parseArgs(args);
+      const requestOptions = buildRequestOptions('PUT', parsedArgs);
 
-      if (!url) {
-        logger.dev('Usage: /http.put <url> [-u] [-H "Key: Value"] [key=value...]');
+      if (!requestOptions) {
+        logger.dev('Usage: /http.put <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
         return;
       }
 
-      // Merge headers: base headers + user headers (if -u flag) + command headers
-      const finalHeaders = flags.has('user-headers') 
-        ? { ...userHeaders, ...headers }
-        : headers;
-
-      await makeRequest({
-        method: 'PUT',
-        url,
-        body: params,
-        headers: finalHeaders
-      });
+      await makeRequest(requestOptions);
     }
   });
 
   // DELETE request
   logger.registerCommand({
     name: 'http.delete',
-    description: 'Make a DELETE request (usage: /http.delete <url> [-u] [-H "Key: Value"])',
+    description: 'Make a DELETE request (usage: /http.delete <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
     handler: async (args) => {
-      const { url, headers, flags } = parseArgs(args);
+      const parsedArgs = parseArgs(args);
+      const requestOptions = buildRequestOptions('DELETE', parsedArgs);
 
-      if (!url) {
-        logger.dev('Usage: /http.delete <url> [-u] [-H "Key: Value"]');
+      if (!requestOptions) {
+        logger.dev('Usage: /http.delete <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
         return;
       }
 
-      // Merge headers: base headers + user headers (if -u flag) + command headers
-      const finalHeaders = flags.has('user-headers') 
-        ? { ...userHeaders, ...headers }
-        : headers;
-
-      await makeRequest({
-        method: 'DELETE',
-        url,
-        headers: finalHeaders
-      });
+      await makeRequest(requestOptions);
     }
   });
 
   // Generic request with custom method
   logger.registerCommand({
     name: 'http.request',
-    description: 'Make a custom HTTP request (usage: /http.request <method> <url> [-u] [-H "Key: Value"] [key=value...])',
+    description: 'Make a custom HTTP request (usage: /http.request <method> <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
     handler: async (args) => {
       if (args.length < 2) {
-        logger.dev('Usage: /http.request <method> <url> [-u] [-H "Key: Value"] [key=value...]');
+        logger.dev('Usage: /http.request <method> <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
         return;
       }
 
       const method = args[0].toUpperCase();
-      const { url, params, headers, flags } = parseArgs(args.slice(1));
+      const parsedArgs = parseArgs(args.slice(1));
+      const requestOptions = buildRequestOptions(method, parsedArgs);
 
-      if (!url) {
+      if (!requestOptions) {
         logger.dev('URL is required');
         return;
       }
 
-      // Merge headers: base headers + user headers (if -u flag) + command headers
-      const finalHeaders = flags.has('user-headers') 
-        ? { ...userHeaders, ...headers }
-        : headers;
-
-      await makeRequest({
-        method,
-        url,
-        ...(method === 'GET' ? { query: params } : { body: params }),
-        headers: finalHeaders
-      });
+      await makeRequest(requestOptions);
     }
   });
 

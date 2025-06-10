@@ -147,10 +147,10 @@ await setUserHeaders({
 
 Supported commands:
 
-* `/http.get <url>?query [-u] [-H "Header: Value"] [key=value...]`
-* `/http.post <url>?query [-u] [-H "Header: Value"] [key=value...]`
-* `/http.put <url>?query [-u] [-H "Header: Value"] [key=value...]`
-* `/http.delete <url>?query [-u] [-H "Header: Value"]`
+* `/http.get <url>?query [-u] [-H "Header: Value"] [-j {...}] [key=value...]`
+* `/http.post <url>?query [-u] [-H "Header: Value"] [-j {...}] [key=value...]`
+* `/http.put <url>?query [-u] [-H "Header: Value"] [-j {...}] [key=value...]`
+* `/http.delete <url>?query [-u] [-H "Header: Value"] [-j {...}] [key=value...]`
 
 ![HTTP Extension](./img/img_2.png)
 
