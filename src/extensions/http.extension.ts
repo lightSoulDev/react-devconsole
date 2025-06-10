@@ -95,7 +95,7 @@ export const parseArgs = (args: string[]): ParsedArgs => {
     if (!arg.startsWith('-') && !result.url) {
       result.url = arg;
     }
-    // Parse JSON body flag: -j {...}
+    // Parse JSON body flag: -j '{...}'
     else if ((arg === '-j' || arg === '--json') && i + 1 < args.length) {
       result.flags.add('json');
       try {
@@ -187,13 +187,13 @@ export const activateHttpExtension = () => {
   // GET request
   logger.registerCommand({
     name: 'http.get',
-    description: 'Make a GET request (usage: /http.get <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
+    description: 'Make a GET request (usage: /http.get <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...])',
     handler: async (args) => {
       const parsedArgs = parseArgs(args);
       const requestOptions = buildRequestOptions('GET', parsedArgs);
 
       if (!requestOptions) {
-        logger.dev('Usage: /http.get <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
+        logger.dev('Usage: /http.get <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...]');
         return;
       }
 
@@ -204,13 +204,13 @@ export const activateHttpExtension = () => {
   // POST request
   logger.registerCommand({
     name: 'http.post',
-    description: 'Make a POST request (usage: /http.post <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
+    description: 'Make a POST request (usage: /http.post <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...])',
     handler: async (args) => {
       const parsedArgs = parseArgs(args);
       const requestOptions = buildRequestOptions('POST', parsedArgs);
 
       if (!requestOptions) {
-        logger.dev('Usage: /http.post <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
+        logger.dev('Usage: /http.post <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...]');
         return;
       }
 
@@ -221,13 +221,13 @@ export const activateHttpExtension = () => {
   // PUT request
   logger.registerCommand({
     name: 'http.put',
-    description: 'Make a PUT request (usage: /http.put <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
+    description: 'Make a PUT request (usage: /http.put <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...])',
     handler: async (args) => {
       const parsedArgs = parseArgs(args);
       const requestOptions = buildRequestOptions('PUT', parsedArgs);
 
       if (!requestOptions) {
-        logger.dev('Usage: /http.put <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
+        logger.dev('Usage: /http.put <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...]');
         return;
       }
 
@@ -238,13 +238,13 @@ export const activateHttpExtension = () => {
   // DELETE request
   logger.registerCommand({
     name: 'http.delete',
-    description: 'Make a DELETE request (usage: /http.delete <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
+    description: 'Make a DELETE request (usage: /http.delete <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...])',
     handler: async (args) => {
       const parsedArgs = parseArgs(args);
       const requestOptions = buildRequestOptions('DELETE', parsedArgs);
 
       if (!requestOptions) {
-        logger.dev('Usage: /http.delete <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
+        logger.dev('Usage: /http.delete <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...]');
         return;
       }
 
@@ -255,10 +255,10 @@ export const activateHttpExtension = () => {
   // Generic request with custom method
   logger.registerCommand({
     name: 'http.request',
-    description: 'Make a custom HTTP request (usage: /http.request <method> <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...])',
+    description: 'Make a custom HTTP request (usage: /http.request <method> <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...])',
     handler: async (args) => {
       if (args.length < 2) {
-        logger.dev('Usage: /http.request <method> <url> [-u] [-H "Key: Value"] [-j {...}] [key=value...]');
+        logger.dev('Usage: /http.request <method> <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...]');
         return;
       }
 

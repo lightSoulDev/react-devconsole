@@ -147,10 +147,30 @@ await setUserHeaders({
 
 Supported commands:
 
-* `/http.get <url>?query [-u] [-H "Header: Value"] [-j {...}] [key=value...]`
-* `/http.post <url>?query [-u] [-H "Header: Value"] [-j {...}] [key=value...]`
-* `/http.put <url>?query [-u] [-H "Header: Value"] [-j {...}] [key=value...]`
-* `/http.delete <url>?query [-u] [-H "Header: Value"] [-j {...}] [key=value...]`
+* `/http.get <url>?query [-u] [-H "Header: Value"] [-j '{"key":"value"}'] [key=value...]`
+* `/http.post <url>?query [-u] [-H "Header: Value"] [-j '{"key":"value"}'] [key=value...]`
+* `/http.put <url>?query [-u] [-H "Header: Value"] [-j '{"key":"value"}'] [key=value...]`
+* `/http.delete <url>?query [-u] [-H "Header: Value"] [-j '{"key":"value"}'] [key=value...]`
+
+**Options:**
+
+* `-u` - Include user-defined headers (set with `/http.headers`)
+* `-H "Header: Value"` - Add custom headers
+* `-j '{"key":"value"}'` - Send JSON body (must be quoted)
+* `key=value` - Send form data (when not using `-j`)
+
+**Examples:**
+
+```bash
+# POST with JSON body
+/http.post https://api.example.com/users -j '{"name":"John","age":30}'
+
+# POST with form data
+/http.post https://api.example.com/users name=John age=30
+
+# GET with headers and query parameters
+/http.get https://api.example.com/users?status=active -H "Authorization: Bearer token"
+```
 
 ![HTTP Extension](./img/img_2.png)
 
