@@ -330,32 +330,59 @@ export const LogConsole: React.FC = () => {
         logger.dev(`Exported ${logs.length} logs to file`);
         break;
 
-      // TODO! Reformat this
       case 'help':
         {
-          let helpText = '=== Built-in Commands ===\n';
-          helpText += '/clear  - Clear all logs\n';
-          helpText += '/export - Export logs to JSON file\n';
-          helpText += '/help   - Show this help message\n';
-          helpText += '/var    - Manage variables (list/set/get/delete)';
+          const helpContent: { [key: string]: any } = {};
+          helpContent['Core Commands'] = {
+            '/clear': 'Clear all logs from the console',
+            '/export': 'Export all logs to a JSON file',
+            '/help': 'Show this help message',
+            '/var': 'Variable management (list, set, get, delete)'
+          };
 
+          helpContent['Variable Commands'] = {
+            '/var': 'List all defined variables',
+            '/var set <name> <value>': 'Set a variable (auto-detects type)',
+            '/var get <name>': 'Get a variable value',
+            '/var delete <name>': 'Delete a variable',
+            'Usage': 'Use ${varName} in any command to insert values'
+          };
+
+          helpContent['JavaScript Evaluation'] = {
+            '> <expression>': 'Evaluate JavaScript expression',
+            'Example': '> Math.random() * 100'
+          };
+
+          // Get registered commands and group by extension
           const commands = logger.getCommands();
-          if (commands.size > 0) {
-            helpText += '\n\n=== Custom Commands ===\n';
-            Array.from(commands.entries())
-              .sort((a, b) => a[0].localeCompare(b[0]))
-              .forEach(([name, cmd]) => {
-                helpText += `/${name.padEnd(7, ' ')} - ${cmd.description}\n`;
-              });
-            helpText = helpText.trimEnd(); // Remove trailing newline
-          }
+          const commandsByExtension: { [key: string]: { [key: string]: string } } = {};
 
-          helpText += '\n\n=== Variable Usage ===\n';
-          helpText += 'Use ${varName} in any command to insert variable values\n';
-          helpText += 'Example: /http.get ${apiUrl}/users\n';
-          helpText += 'Type /var to see all defined variables';
+          Array.from(commands.entries())
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .forEach(([name, cmd]) => {
+              const prefix = name.split('.')[0];
+              const extensionName = prefix.charAt(0).toUpperCase() + prefix.slice(1);
+              const section = `${extensionName} Extension`;
 
-          logger.dev('Available Commands', helpText);
+              if (!commandsByExtension[section]) {
+                commandsByExtension[section] = {};
+              }
+
+              commandsByExtension[section][`/${name}`] = cmd.description || 'No description';
+            });
+
+          Object.entries(commandsByExtension).forEach(([section, cmds]) => {
+            helpContent[section] = cmds;
+          });
+
+          helpContent['Tips'] = {
+            'Autocomplete': 'Press Tab to autocomplete commands',
+            'History': 'Use ↑/↓ arrows to navigate command history',
+            'Quick Clear': 'Type "clear" or "cls" (without /) to clear logs',
+            'Escape': 'Press Escape to close autocomplete menu'
+          };
+
+          logger.dev('DevConsole Help', helpContent);
           break;
         }
 

@@ -90,10 +90,14 @@ DevConsole.error('Unexpected error', new Error('Oops'));
 
 Prefix commands with `/` in the console:
 
-* `/help` – Show all commands
+* `/help` – Show all available commands with descriptions
 * `/clear`, `clear`, or `cls` – Clear the console
-* `/export` – Export logs to a file
-* `/var list|set|get|delete` – Manage runtime variables
+* `/export` – Export logs to a JSON file
+* `/var` – Manage runtime variables
+  * `/var` or `/var list` – List all variables
+  * `/var set <name> <value>` – Set a variable
+  * `/var get <name>` – Get a variable value
+  * `/var delete <name>` – Delete a variable
 
 You can also register custom commands:
 
@@ -147,6 +151,8 @@ await setUserHeaders({
 
 Supported commands:
 
+* `/http.headers [show|clear|set <key> <value>]` - Manage user-defined headers
+* `/http.request <method> <url> [-u] [-H "Key: Value"] [-j \'{"key":"value"}\'] [key=value...]` - Custom HTTP request
 * `/http.get <url>?query [-u] [-H "Header: Value"] [-j '{"key":"value"}'] [key=value...]`
 * `/http.post <url>?query [-u] [-H "Header: Value"] [-j '{"key":"value"}'] [key=value...]`
 * `/http.put <url>?query [-u] [-H "Header: Value"] [-j '{"key":"value"}'] [key=value...]`
@@ -184,8 +190,8 @@ await activateStorageExtension();
 
 Commands include:
 
-* `storage.ls` - list local storage keys
-* `storage.ss` - list session storage keys
+* `/storage.ls` - list local storage keys
+* `/storage.ss` - list session storage keys
 * `/storage.set <ls|ss> <key> <value>` - set key-value pair in local/session storage
 * `/storage.clear <ls|ss|all>` - clear local/session storage or both
 * `/storage.export` - export local/session storage to a file
@@ -214,3 +220,7 @@ DevConsole.dev(message, data?)
 DevConsole is safe for production use. When the `VITE_DEV_CONSOLE` variable is set to `disable`, all logging calls are replaced with no-op implementations, and the bundle does not include the DevConsole UI or logic.
 
 For environments like staging or QA, use `hidden` mode for optional activation via DevTools:
+
+## TODO List
+
+* [ ] Improve command registration and help generation. For now, it's hard to determine which commands are registered by which extensions and which are user custom commands.
